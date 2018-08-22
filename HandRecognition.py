@@ -25,8 +25,8 @@ capture_pos_x = 500
 capture_pos_y = 150
 cap_region_x_begin = 0.5  # start point/total width
 cap_region_y_end = 0.8  # start point/total width
-#finger_thresh_l = 2.0
-#finger_thresh_u = 3.8
+#finger_thresh_l = 2.0  # default
+#finger_thresh_u = 3.8  # default
 finger_thresh_l = 1.1
 finger_thresh_u = 3.0
 radius_thresh = 0.04  # factor of width of full frame
@@ -98,7 +98,8 @@ def mark_fingers(frame_in, hull, pt, radius):
     for i in range(len(hull)):
         dist = np.sqrt((hull[-i][0][0] - hull[-i + 1][0][0]) ** 2 + (hull[-i][0][1] - hull[-i + 1][0][1]) ** 2)
         #print('dist:', dist)
-        if dist > 50:  # default is 18
+        #if dist > 50:  # default is 18
+        if dist > 10:  # default is 18
             if j == 0:
                 finger = [(hull[-i][0][0], hull[-i][0][1])]
             else:
@@ -213,7 +214,7 @@ if __name__ == '__main__':
     capture_done = 0
     bg_captured = 0
 
-    while (1):
+    while 1:
         # Capture frame from camera
         ret, frame = camera.read()
         frame = cv2.bilateralFilter(frame, 5, 50, 100)
@@ -223,7 +224,7 @@ if __name__ == '__main__':
                       (frame.shape[1], int(cap_region_y_end * frame.shape[0])), (255, 0, 0), 1)
         frame_original = np.copy(frame)
         cv2.imwrite('frame_original.png', frame_original)
-        if (bg_captured):
+        if bg_captured:
             fg_frame = remove_bg(frame)
 
         if (not (capture_done and bg_captured)):
